@@ -1,17 +1,9 @@
 // 送信するデータ
-const notes = [
-  {
-    deckName: 'test',
-    modelName: 'Basic',
-    fields: {
-      Front: 'front content',
-      Back: 'back content',
-    },
-  },
-];
+const deckName = 'test';
+const modelName = 'Basic';
 
 const param = {
-  notes,
+  notes: setRequestBody(),
 };
 
 const body = {
@@ -28,6 +20,27 @@ const requestOptions = {
   },
   body: JSON.stringify(body),
 };
+
+function setRequestBody() {
+  const fs = require('node:fs');
+  let text = fs.readFileSync(
+    '/Users/sasakiryou/Documents/dev/anki-script/scripts/addNotes/data/1.json'
+  );
+  let notes = [];
+  data = JSON.parse(text);
+  data.map((item) => {
+    let requestBody = {
+      deckName: deckName,
+      modelName: modelName,
+      fields: {
+        Front: item?.word,
+        Back: item?.part_of_speech,
+      },
+    };
+    notes.push(requestBody);
+  });
+  return notes;
+}
 
 // fetchによるリクエスト送信
 fetch('http://localhost:8765', requestOptions)
